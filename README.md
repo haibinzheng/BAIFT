@@ -1,33 +1,79 @@
 # BAIFT
 
-This repository is a fairness evaluation pipeline centered on BAIFT.
+This repository contains the code, sample data, evaluation scripts, and visualization artifacts for **BAIFT**, a behavior-aware framework for intersectional fairness testing of large language models.
 
-## Introduction
+The artifact is prepared for anonymous review. It intentionally avoids author names, affiliations, and personal contact information in the repository-facing documentation.
 
-BAIFT (Bias Attribution in Fairness Testing) is an intersectional fairness testing framework for large language models. The core idea is to construct paired prompts that keep the task intent as stable as possible while varying sensitive identity attributes, then measure whether the model produces behaviorally different responses under those controlled changes.
+## Overview
 
-## BAIFT
+BAIFT targets fairness violations that are difficult to expose with outcome-only or semantic-only checks. Given a task anchor, BAIFT generates paired or grouped prompts that preserve the task intent while varying sensitive attributes. It then compares the target LLM responses with behavior-aware metrics to detect explicit discriminatory instances and implicit behavioral disparities.
 
-BAIFT is the main method in this project.
-In this repository, BAIFT is used to:
+BAIFT focuses on four capabilities:
 
-- generate paired fairness test cases
-- run model inference on the paired prompts
-- evaluate semantic consistency and fairness-related response disparity
+- **Intersectional case generation**: instantiate single sensitive attributes and selected intersectional attribute pairs.
+- **Behavior-aware oracle**: evaluate response differences across helpfulness, informativeness, specificity, refusal behavior, and respect-related behavior.
+- **Prioritized testing**: rank generated cases with rule-based, learned, and judge-based scoring signals.
+- **Diagnostic analysis**: report vulnerable groups, affected behavioral dimensions, and intersectional amplification patterns.
 
-## How to use
+## Framework
 
-Install:
+The figure below summarizes the BAIFT workflow implemented in this artifact.
+
+![BAIFT framework](Vis/framework.png)
+
+## Repository Layout
+
+```text
+BAIFT_Code/
+|-- APIs/                       # API and local inference entry points
+|-- BAIFT-main/                 # main BAIFT execution entry
+|-- Baselines/                  # baseline generators: METAL, CAFFE, LLM-Roleplay
+|-- Datasets/                   # generated fairness-test cases
+|-- Metrics/                    # metric and scoring entry points
+|-- Models/                     # model wrappers
+|-- Results/                    # inference and evaluation outputs
+|-- Vis/                        # figures and visualization artifacts
+|-- data/                       # physical storage for generated cases and responses
+|-- eval/
+|   |-- generate/               # generation scripts for each method
+|   |-- infer/                  # model-specific inference scripts
+|   |-- score/                  # scoring scripts for each method
+|   `-- scripts/                # shared inference and scoring implementations
+|-- infer/                      # inference backends
+|-- src/
+|   |-- core/                   # shared constants and schemas
+|   |-- generators/             # BAIFT and baseline generators
+|   |-- metrics/                # Sim(c), Fv(c), IoU/AUC, behavior metrics
+|   |-- models/                 # API/local model abstractions
+|   `-- scoring/                # rule-based, learned, judge, and aggregation logic
+|-- requirements.txt
+`-- run.py
+```
+
+## Installation
 
 ```bash
 pip install -r requirements.txt
 ```
+
+For API-based inference, set the endpoint and key expected by your backend. The code supports OpenAI-compatible endpoints through environment variables or command-line arguments.
+
+```bash
+export API_BASE="https://your-api-endpoint"
+export API_KEY="your-api-key"
+```
+
+For local inference, start the corresponding local serving backend first, such as vLLM, and then run the local inference scripts under `eval/infer/local/`.
+
+## Quick Start
 
 Generate BAIFT cases:
 
 ```bash
 python BAIFT-main/run.py pipeline \
   --method baift \
+  --num 100 \
+  --seed 42 \
   --output ./Datasets/generate/baift/custom/baift_cases.jsonl
 ```
 
@@ -47,105 +93,108 @@ Run scoring:
 ```bash
 python eval/scripts/score.py \
   --input ./Results/eval/baift/$MODEL_NAME/responses.jsonl \
-  --output ./Results/eval/baift/$MODEL_NAME/lsa_scores.jsonl \
+  --output ./Results/eval/baift/$MODEL_NAME/scores.jsonl \
   --tau 0.12
 ```
 
-## Baselines
+## Supported Methods
 
-Other supported methods:
+The artifact includes BAIFT and three baselines. All methods share the same inference and scoring pipeline.
 
-- CAFFE: counterfactual prompts
-- METAL: identity-prefix perturbation
-- LLM-RolePlay: role-based paired prompts
+| Method | Purpose |
+| --- | --- |
+| `baift` | Behavior-aware intersectional fairness testing. |
+| `caffe` | Counterfactual prompt generation baseline. |
+| `metal` | Metamorphic identity-perturbation baseline. |
+| `llm_roleplay` | Role-based paired-prompt baseline adapted from role-playing fairness probes. |
 
-They use the same inference and scoring pipeline as BAIFT.
+Example generation commands:
 
-## Project structure
+```bash
+bash eval/generate/baift.sh
+bash eval/generate/caffe.sh
+bash eval/generate/metal.sh
+bash eval/generate/llm_roleplay.sh
+```
 
-The capitalized directories are the main user-facing entries. Some of them are
-symbolic links to the implementation or data directories, so the same files are
-not duplicated. Existing generated datasets, model responses, score files, and
-placeholder directories are retained.
+## Main Metrics
+
+BAIFT records both detection metrics and diagnostic metrics.
+
+| Metric | Meaning |
+| --- | --- |
+| `Sim(c)` | Semantic similarity between paired responses. Higher values indicate stronger semantic consistency. |
+| `Fv(c)` | Behavior-aware fairness violation score. Higher values indicate stronger behavioral disparity. |
+| `#DIs` | Number of discriminatory instances detected by the method. |
+| `#EDIs` | Number of explicit discriminatory instances. |
+| `#IDIs` | Number of implicit discriminatory instances. |
+| `IDI Ratio` | Fraction of implicit discriminatory instances among detected discriminatory instances. |
+| `VG(g)` | Vulnerable-group score for group-level diagnosis. |
+| `Amp(c)` | Intersectional amplification score. Positive values indicate stronger joint-attribute unfairness. |
+| `IoU` / `AUC` | Coverage overlap and threshold-integrated coverage statistics. |
+
+## Reproducing the Evaluation Workflow
+
+The full evaluation can be run in three stages.
+
+1. **Generate test cases**
+
+```bash
+bash eval/generate/baift.sh
+bash eval/generate/caffe.sh
+bash eval/generate/metal.sh
+bash eval/generate/llm_roleplay.sh
+```
+
+2. **Run model inference**
+
+API examples are stored under:
 
 ```text
-BAIFT/
-├── APIs/                              # inference backends (links to infer/)
-│   ├── api.py                         # OpenAI-compatible API inference
-│   └── local.py                       # local model inference
-├── BAIFT-main/                        # main BAIFT entry (links to root code)
-│   ├── run.py                         # generation pipeline CLI
-│   ├── infer/
-│   │   ├── api.py
-│   │   ├── local.py
-│   │   └── test_infer.py
-│   └── src/
-│       ├── core/                      # constants and shared schemas
-│       ├── generators/                # BAIFT and baseline generators
-│       ├── metrics/                   # LSA, FV, IoU/AUC, disparity, behavior
-│       ├── models/                    # API/local model abstractions
-│       └── scoring/                   # rule, learned, judge, aggregation
-├── Baselines/                         # baseline generator entries
-│   ├── caffe.py
-│   ├── formal_datasets.py
-│   ├── metal.py
-│   └── roleplay.py
-├── Datasets/                          # generated input datasets
-│   └── generate/                      # link to data/generate/
-│       ├── baift/<model>/samples.jsonl
-│       ├── caffe/<model>/samples.jsonl
-│       ├── llm_roleplay/<model>/samples.jsonl
-│       └── metal/<model>/samples.jsonl
-├── Metrics/                           # metric and scoring entries
-│   ├── metrics/
-│   │   ├── behavior.py
-│   │   ├── disparity.py
-│   │   ├── fv.py
-│   │   ├── iou_auc.py
-│   │   └── lsa.py
-│   └── scoring/
-│       ├── aggregator.py
-│       ├── learned.py
-│       ├── llm_judge.py
-│       └── rule_based.py
-├── Models/                            # model implementations
-│   └── models/
-│       ├── base.py
-│       ├── api.py
-│       └── local.py
-├── Results/                           # retained inference/evaluation outputs
-│   └── eval/                          # link to data/eval/
-│       ├── baift/<model>/
-│       │   ├── responses.jsonl       # model responses
-│       │   └── *_scores.jsonl        # metric output, when generated
-│       ├── caffe/<model>/
-│       ├── llm_roleplay/<model>/
-│       └── metal/<model>/
-├── Vis/                               # visualization outputs
-├── eval/                              # executable evaluation workflow
-│   ├── generate/                      # one generation script per method
-│   │   ├── baift.sh
-│   │   ├── caffe.sh
-│   │   ├── llm_roleplay.sh
-│   │   └── metal.sh
-│   ├── infer/                         # response generation per model
-│   │   ├── api/                   # hosted/API model scripts
-│   │   └── local/                 # local model scripts
-│   ├── score/                         # one evaluation script per method
-│   │   ├── score_baift.sh
-│   │   ├── score_caffe.sh
-│   │   ├── score_llm_roleplay.sh
-│   │   └── score_metal.sh
-│   ├── scripts/
-│   │   ├── infer.py               # shared inference implementation
-│   │   └── score.py               # shared evaluation implementation
-│   └── run_vllm.sh                    # local vLLM server helper
-├── data/                              # physical storage behind links above
-│   ├── generate/                      # generated cases; keep result files
-│   └── eval/                          # responses and scores; keep results
-├── infer/                             # physical inference implementation
-├── src/                               # physical core implementation
-├── run.py                             # physical pipeline entry point
-└── utils/
-    └── utils.py
+eval/infer/api/
 ```
+
+Local examples are stored under:
+
+```text
+eval/infer/local/
+```
+
+3. **Score responses**
+
+```bash
+bash eval/score/score_baift.sh
+bash eval/score/score_caffe.sh
+bash eval/score/score_metal.sh
+bash eval/score/score_llm_roleplay.sh
+```
+
+The output files are written under `Results/eval/` or `data/eval/`, depending on the script entry point.
+
+## Visualization Artifacts
+
+The `Vis/` directory stores figures used for checking and presenting the experimental results.
+
+```text
+Vis/framework.png              # BAIFT workflow
+Vis/CoverageIoU.pdf            # RQ1 coverage curve
+Vis/heatmap_Sim.pdf            # RQ1 fine-tuning Sim(c)
+Vis/heatmap_Fv.pdf             # RQ1 fine-tuning Fv(c)
+Vis/Radar-DIs.pdf              # RQ3 #DIs radar plot
+Vis/Radar-Fv.pdf               # RQ3 Fv(c) radar plot
+Vis/DiagnosisHIS2R.pdf         # RQ4 behavior-dimension diagnosis
+Vis/DiagnosisVG.pdf            # RQ4 vulnerable-group diagnosis
+Vis/DiagnosisAmp.pdf           # RQ4 amplification diagnosis
+```
+
+## Anonymous Artifact Notes
+
+Before packaging the artifact for anonymous review, check the following:
+
+- Do not include `.git/`, because Git metadata may contain author names, emails, and remote repository URLs.
+- Do not include `.DS_Store`, `__pycache__/`, `.pytest_cache/`, or other local cache files.
+- Do not include API keys, endpoint-specific secrets, private model credentials, or local absolute paths.
+- Keep model names, method names, and experimental settings consistent with the manuscript.
+
+The source files in this repository use environment variables for API credentials and do not require hard-coded secrets.
+
