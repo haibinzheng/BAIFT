@@ -187,3 +187,14 @@ Vis/DiagnosisVG.pdf            # RQ4 vulnerable-group diagnosis
 Vis/DiagnosisAmp.pdf           # RQ4 amplification diagnosis
 ```
 
+## Anonymous Artifact Notes
+
+Before packaging the artifact for anonymous review, check the following:
+
+- Do not include `.git/`, because Git metadata may contain author names, emails, and remote repository URLs.
+- Do not include `.DS_Store`, `__pycache__/`, `.pytest_cache/`, or other local cache files.
+- Do not include API keys, endpoint-specific secrets, private model credentials, or local absolute paths.
+- Keep model names, method names, and experimental settings consistent with the manuscript.
+
+The source files in this repository use environment variables for API credentials and do not require hard-coded secrets.
+
