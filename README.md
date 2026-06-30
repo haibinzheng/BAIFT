@@ -341,13 +341,4 @@ This sequence checks the main implementation path without requiring the full que
 - If scoring produces `sim = 1.0` for every case, the LSA scorer may not have loaded; inspect the console warning printed by `eval/scripts/score.py`.
 - If generated output directories do not exist, create them first or choose an existing output path.
 
-## Anonymous Artifact Notes
-
-Before packaging the artifact for anonymous review, check the following:
-
-- Do not include `.git/`, because Git metadata may contain author names, emails, and remote repository URLs.
-- Do not include `.DS_Store`, `__pycache__/`, `.pytest_cache/`, or other local cache files.
-- Do not include API keys, endpoint-specific secrets, private model credentials, or local absolute paths.
-- Keep model names, method names, and experimental settings consistent with the manuscript.
-
 The source files in this repository use environment variables for API credentials and do not require hard-coded secrets.
