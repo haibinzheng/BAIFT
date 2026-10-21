@@ -98,9 +98,9 @@ Algorithm-flagged EDIs satisfy `Sim(c) < 0.9`; IDIs satisfy `Sim(c) >= 0.9` and 
 
 **Legacy output keys:** `paper_metrics()['DIs']` contains the EDI count, `IDIs` the IDI count, and `DIS` their total. This preparation retains these historical keys and does not alter experimental results.
 
-## Citation and contact
+## Authors and contact
 
-[CITATION.cff](CITATION.cff) provides the supplied author order and title. Proceedings metadata and DOI will be added when supplied by the publisher. No artifact badge is claimed.
+The authors are listed below in paper order. Please use the BibTeX entry in the final section to cite the paper.
 
 | Author | Affiliation | Email |
 | --- | --- | --- |
@@ -110,3 +110,20 @@ Algorithm-flagged EDIs satisfy `Sim(c) < 0.9`; IDIs satisfy `Sim(c) >= 0.9` and 
 | Zhenyang Yu | Zhejiang University of Technology | fishocean13@gmail.com |
 
 The existing [Apache License 2.0](LICENSE) is retained. External datasets and models retain their own terms. For reproducibility questions, open a GitHub Issue with versions and a minimal example, omitting credentials and private responses.
+
+## Citation
+
+If you use BAIFT in your research, please cite our ICSE 2027 paper:
+
+```bibtex
+@inproceedings{zheng2027baift,
+  author    = {Zheng, Haibin and Xu, Gan and Chen, Jinyin and Yu, Zhenyang},
+  title     = {{BAIFT}: A Behavior-Aware Framework for Intersectional Fairness Testing of {LLMs}},
+  booktitle = {Proceedings of the 49th IEEE/ACM International Conference on Software Engineering (ICSE)},
+  year      = {2027},
+  note      = {Accepted for publication},
+  url       = {https://github.com/haibinzheng/BAIFT}
+}
+```
+
+You can also download [citation.bib](citation.bib) or use GitHub's **Cite this repository** menu, which is configured to prefer the paper citation. DOI, page numbers, and final proceedings details will be added when available from the publisher.

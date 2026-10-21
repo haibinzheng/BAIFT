@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite the associated BAIFT paper. Final proceedings metadata will be added when available."
+message: "If you use BAIFT, please cite our ICSE 2027 paper using the preferred citation below."
 type: software
 title: "BAIFT: A Behavior-Aware Framework for Intersectional Fairness Testing of LLMs"
 url: "https://github.com/haibinzheng/BAIFT"
@@ -18,3 +18,19 @@ authors:
   - family-names: Yu
     given-names: Zhenyang
     affiliation: Zhejiang University of Technology
+preferred-citation:
+  type: conference-paper
+  title: "BAIFT: A Behavior-Aware Framework for Intersectional Fairness Testing of LLMs"
+  authors:
+    - family-names: Zheng
+      given-names: Haibin
+    - family-names: Xu
+      given-names: Gan
+    - family-names: Chen
+      given-names: Jinyin
+    - family-names: Yu
+      given-names: Zhenyang
+  collection-title: "Proceedings of the 49th IEEE/ACM International Conference on Software Engineering (ICSE)"
+  year: 2027
+  notes: "Accepted for publication; final proceedings metadata pending."
+  url: "https://github.com/haibinzheng/BAIFT"
