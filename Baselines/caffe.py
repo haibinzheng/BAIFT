@@ -1,1 +1,2 @@
-../src/generators/caffe.py
+"""Compatibility import; use src.generators for new code."""
+from src.generators.caffe import CAFFEGenerator

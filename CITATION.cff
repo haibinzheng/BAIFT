@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "Please cite the associated BAIFT paper. Final proceedings metadata will be added when available."
+type: software
+title: "BAIFT: A Behavior-Aware Framework for Intersectional Fairness Testing of LLMs"
+url: "https://github.com/haibinzheng/BAIFT"
+repository-code: "https://github.com/haibinzheng/BAIFT"
+license: Apache-2.0
+authors:
+  - family-names: Zheng
+    given-names: Haibin
+    affiliation: Zhejiang University of Technology
+  - family-names: Xu
+    given-names: Gan
+    affiliation: Zhejiang University of Technology
+  - family-names: Chen
+    given-names: Jinyin
+    affiliation: Zhejiang University of Technology
+  - family-names: Yu
+    given-names: Zhenyang
+    affiliation: Zhejiang University of Technology
