@@ -1,1 +1,1 @@
-"""BAIFT_clean - Bias Attribution In Fairness Testing"""
+"""BAIFT: behavior-aware intersectional fairness testing of LLMs."""

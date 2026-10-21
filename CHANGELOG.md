@@ -10,3 +10,9 @@
 - Remove tracked Python bytecode from the current tree; retain Git history.
 
 This preparation does not add experiments, modify historical paper results, or certify full reproducibility.
+
+## Public source documentation review
+
+- Correct the package description to use the paper's BAIFT name.
+- Update scoring usage documentation to the current script path and required configuration.
+- Require a supplied model path when starting local serving, replacing a machine-specific default.

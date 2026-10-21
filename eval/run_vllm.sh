@@ -2,7 +2,7 @@
 
 set -e
 
-MODEL="${1:-/data/Newdisk/codegitee/models/Qwen2.5-VL-7B-Instruct}"
+MODEL="${1:?Usage: bash eval/run_vllm.sh MODEL_PATH [PORT] [GPU] [MEM]}"
 PORT="${2:-8200}"
 GPU="${3:-0}"
 MEM="${4:-40}"

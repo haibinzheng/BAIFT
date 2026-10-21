@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 Score: evaluate responses with LSA + behavior scoring + paper metrics.
-Usage: python eval/score.py --input responses.jsonl --output lsa_scores.jsonl
-       python eval/score.py --input responses.jsonl --output metrics.json --tau 0.3626
+Usage: python eval/scripts/score.py --input responses.jsonl --output scores.jsonl
+Supply --learned-model for the trained behavioral checkpoint and --judge to
+enable the configured remote judge. Add --tau only after threshold calibration.
 """
 import argparse
 import json
